@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from database import validate_user, add_user, save_prediction, get_all_predictions, get_all_users, edit_user, delete_user
 from student_view import show_student_dashboard
 from admin_view import show_admin_dashboard
+import os
 
 # ------------------- Utilities -------------------
 def rerun_app():
@@ -37,15 +38,20 @@ def generate_explanation(pred_prob, prediction, input_data):
 @st.cache_resource
 def load_assets():
     try:
-        model = joblib.load("model.pkl")
-        columns = joblib.load("model_columns.pkl")
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+        model = joblib.load(os.path.join(BASE_DIR, "model.pkl"))
+        columns = joblib.load(os.path.join(BASE_DIR, "model_columns.pkl"))
+
         encoders = {
-            "gender": joblib.load("gender_encoder.pkl"),
-            "part_time_job": joblib.load("part_time_job_encoder.pkl"),
-            "extracurricular_activities": joblib.load("extracurricular_activities_encoder.pkl"),
-            "career_aspiration": joblib.load("career_aspiration_encoder.pkl")
+            "gender": joblib.load(os.path.join(BASE_DIR, "gender_encoder.pkl")),
+            "part_time_job": joblib.load(os.path.join(BASE_DIR, "part_time_job_encoder.pkl")),
+            "extracurricular_activities": joblib.load(os.path.join(BASE_DIR, "extracurricular_activities_encoder.pkl")),
+            "career_aspiration": joblib.load(os.path.join(BASE_DIR, "career_aspiration_encoder.pkl"))
         }
+
         return model, columns, encoders
+
     except Exception as e:
         st.error(f"❌ Asset loading error: {e}")
         st.stop()
